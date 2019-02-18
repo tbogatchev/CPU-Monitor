@@ -1,0 +1,26 @@
+{
+  "name": "datadog",
+  "version": "1.0.0",
+  "description": "CPU performance monitor",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "build": "webpack"
+  },
+  "author": "tbogatchev",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3",
+    "recharts": "^1.5.0"
+  }
+}

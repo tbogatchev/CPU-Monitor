@@ -1,0 +1,43 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Roboto', sans-serif; font-size: 18px}
+
+.streamContainer {
+    width: 100%;
+    margin: 0 auto;
+    background-color: lightblue;
+    color: white;
+    padding: 20px 20px 30px 20px;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: 500;
+    margin:0 auto;
+    width: 500px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.col {
+    flex: 1
+}
+
+.container {
+    display: flex
+}
+
+.transaction:nth-child(odd) {
+    background: white;
+    color: lightblue;
+}
+
+.transactionsContainer {
+    margin-right: 20px;
+}
+
+.totalsContainer {
+    border: solid white 1px;
+    padding: 10px 10px;
+    font-size: 20px;
+    font-weight: 300;
+}
