@@ -9,10 +9,13 @@ export default class Timeseries extends React.Component {
   }
   render() {
     console.log('current data: ', this.props.data);
+    //We have to copy the array here to create a new Object reference
+    //Otherwise the graph won't trigger a render update
+    const data = Array.from(this.props.data);
     return (
-      <ResponsiveContainer width={700} height="80%">
+      <ResponsiveContainer width="80%" height="100%">
         <LineChart
-          data={this.props.data}
+          data={data}
           margin={{
             top: 5, right: 30, left: 20, bottom: 5,
           }}

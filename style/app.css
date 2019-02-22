@@ -22,22 +22,10 @@ body { font-family: 'Roboto', sans-serif; font-size: 18px}
     flex: 1
 }
 
+.timeseries {
+    flex: 4
+}
+
 .container {
     display: flex
-}
-
-.transaction:nth-child(odd) {
-    background: white;
-    color: lightblue;
-}
-
-.transactionsContainer {
-    margin-right: 20px;
-}
-
-.totalsContainer {
-    border: solid white 1px;
-    padding: 10px 10px;
-    font-size: 20px;
-    font-weight: 300;
 }
