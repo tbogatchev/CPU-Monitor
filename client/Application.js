@@ -1,6 +1,7 @@
 import React from 'react';
 import Timeseries from './Timeseries';
 import Alerts from './Alerts';
+import moment from 'moment';
 
 //Check to see if we have 2 minutes of data. 
 //2 minutes = 120 seconds
@@ -8,35 +9,20 @@ import Alerts from './Alerts';
 const TWO_MINUTE_INTERVAL = 12;
 const HIGH_LOAD_ALERT = 'highLoad';
 const RETURN_TO_NORMAL_LOAD = 'normalLoad';
+const LOAD_THRESHOLD = 1.0;
 
 export default class Application extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      cpuData: [
-          {time: 0, val: .5},
-          {time: 10, val: .55},
-          {time: 20, val: .65},
-          {time: 30, val: .75},
-          {time: 40, val: 1.5},
-          {time: 50, val: 1.5},
-          {time: 60, val: 1.55},
-          {time: 70, val: 1.75},
-          {time: 80, val: 1.5},
-          {time: 40, val: 1.5},
-          {time: 50, val: 1.5},
-          {time: 60, val: 1.55},
-          {time: 70, val: 1.75},
-          {time: 80, val: 1.5},
-      ],
-      time: 80,
+      cpuData: [],
+      time: 0,
       alerts: []
     };
-    //TODO REMOVE
-    this.fetchCPUData(1.1);
   }
 
   componentDidMount() {
+    //fetch the data every 10 seconds
     this.interval = setInterval(this.fetchCPUData.bind(this), 10000);
   }
 
@@ -45,9 +31,8 @@ export default class Application extends React.Component {
   }
   /**
    * Fetches the average CPU load from the server
-   *TODO remove test
    */
-  fetchCPUData(test) {
+  fetchCPUData() {
     return fetch('/loadTimes')
     .then(response => response.json())
     .then(response => {
@@ -59,14 +44,7 @@ export default class Application extends React.Component {
       };
       cpuData.push(newDataPoint);
       const loadAverage = Application.calculateTwoMinuteLoadAverage(cpuData);
-      //TODO REMOVE
-      // let loadAverage;
-      // if (test) {
-      //   loadAverage = test;
-      // } else {
-      //   loadAverage = Application.calculateTwoMinuteLoadAverage(cpuData);
-      // }
-      const alert = this.createAlert(loadAverage);
+      const alert = Application.createAlert(loadAverage, alerts);
       if (alert) {
         alerts.push(alert);
       }
@@ -89,20 +67,25 @@ export default class Application extends React.Component {
     }
     const lastTwelve = cpuData.slice(cpuData.length - TWO_MINUTE_INTERVAL);
     const loadSum = lastTwelve.reduce((accumulator, currentData) => {
-      accumulator + currentData.val;
+      return accumulator + currentData.val;
     }, 0)
     return loadSum / TWO_MINUTE_INTERVAL;
   }
-
-  createAlert(loadAverage) {
-    const alerts = this.state.alerts;
+  /**
+   * Creates an alert object if there is an alert condition met
+   * @param {Number} loadAverage
+   * @param {Object[]} alerts
+   * @returns {Object | undefined}
+   */
+  static createAlert(loadAverage, alerts) {
     const lastAlert = alerts[alerts.length - 1];
     const now = Date.now(); 
-    const isLoadHigh = loadAverage > 1;
+    const isLoadHigh = loadAverage > LOAD_THRESHOLD;
     const isLastAlertAWarning = lastAlert && lastAlert.alertType === HIGH_LOAD_ALERT;
+    console.log(`isLoadHigh: ${isLoadHigh}, isLastAlertAWarning: ${isLastAlertAWarning}, loadAverage: ${loadAverage}`);
 
     if(isLoadHigh && !isLastAlertAWarning) {
-        const message = `High load generated an alert - load = ${loadAverage}, triggered at ${now}`;
+        const message = `High load generated an alert - load = ${loadAverage}, triggered at ${Application.formatDateTime(now)}`;
         return {
           alertType: HIGH_LOAD_ALERT,
           message,
@@ -111,7 +94,7 @@ export default class Application extends React.Component {
     }
     if(!isLoadHigh && isLastAlertAWarning) {
       const totalHighLoadTime = now - lastAlert.triggeredAt;
-      const message = `System load back to normal. Total duration of high load = ${totalHighLoadTime}. Resolved at ${now}.`
+      const message = `System load back to normal. Total duration of high load: ${Application.formatTime(totalHighLoadTime)}. Resolved at ${Application.formatDateTime(now)}.`
       return {
         alertType: RETURN_TO_NORMAL_LOAD,
         message,
@@ -119,14 +102,32 @@ export default class Application extends React.Component {
       }
     }
   }
+  /**
+   * Formats a time to be represented as hours:minutes:seconds:milliseconds
+   * @param {Number} time
+   * @returns {String}
+   */
+  static formatTime(time) {
+    const momentDateTime = moment.utc(time);
+    return momentDateTime.format('HH:mm:ss:SSS')
+  }
+  /**
+   * Formats a dataTime to be represented as months-days-years hours:minutes:seconds
+   * @param {Number} time
+   * @returns {String}
+   */
+  static formatDateTime(dateTime) {
+    const momentDateTime = moment(dateTime);
+    return momentDateTime.format('MM-DD-YYYY HH:mm:ss')
+  }
 
   render() {
     return (
       <div>
         <div className="title">CPU Performance</div>
         <div className="container">
-          <Timeseries class="timeseries" data={this.state.cpuData}/>
-          <Alerts class="alerts" data={this.state.alerts}/>
+          <Timeseries data={this.state.cpuData}/>
+          <Alerts data={this.state.alerts}/>
         </div>
       </div>
     );

@@ -13,15 +13,12 @@ export default class Timeseries extends React.Component {
     //Otherwise the graph won't trigger a render update
     const data = Array.from(this.props.data);
     return (
-      <ResponsiveContainer width="80%" height="100%">
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
-          margin={{
-            top: 5, right: 30, left: 20, bottom: 5,
-          }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" />
+          <XAxis dataKey="time"/>
           <YAxis dataKey="val" domain={[0, 'auto']}/>
           <Tooltip />
           <Legend />
