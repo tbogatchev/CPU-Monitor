@@ -11,7 +11,6 @@ export default class Alerts extends React.Component {
     super(props);
   }
   render() {
-    console.log('current data: ', this.props.data);
     return (
       <div class="alerts">
         {this.props.data.map((alert, index) =>

@@ -12,7 +12,9 @@ body { font-family: 'Roboto', sans-serif; font-size: 18px}
 }
 
 .alerts {
-    width: 500px
+    width: 35vh;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .container {

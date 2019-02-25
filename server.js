@@ -17,7 +17,6 @@ app.get( '/', function(req, res) {
 app.get('/loadTimes', function(req, res) {
 	const cpus = os.cpus().length; // in the land of multi-cpu computers the avg needs to be normalized by number of CPUs 
 	const avg = os.loadavg()[0]/cpus;
-	console.log('Average measured at: ', avg);
 	res.json({ average: avg });
 });
 
